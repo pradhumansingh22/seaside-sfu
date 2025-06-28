@@ -19,10 +19,17 @@ const consumers = new Map();
 
 const startMediaSoup = async () => {
   worker = await mediasoup.createWorker({
-    rtcMinPort: 2000, 
+    rtcMinPort: 2000,
     rtcMaxPort: 2020,
   });
   console.log("worker created");
+
+  worker.on("died", () => {
+    console.error("mediasoup worker has died");
+    setTimeout(() => {
+      process.exit();
+    }, 2000);
+  });
 
   router = await worker.createRouter({
     mediaCodecs: [
@@ -41,7 +48,6 @@ const startMediaSoup = async () => {
   });
   console.log("router created");
 };
-
 startMediaSoup();
 
 const server = app.listen(8080, () => {
@@ -63,45 +69,79 @@ wss.on("connection", (ws) => {
       );
     }
 
-    if (action === "createTransport") {
-      const transport = await router.createWebRtcTransport({
+    if (action === "createTransports") {
+      const producerTransport = await router.createWebRtcTransport({
         listenIps: [{ ip: "0.0.0.0", announcedIp: "47.15.77.10" }],
         enableTcp: true,
         enableUdp: true,
         preferUdp: true,
       });
 
-      transports.set(clientId, transport);
+      const consumerTransport = await router.createWebRtcTransport({
+        listenIps: [{ ip: "0.0.0.0", announcedIp: "47.15.77.10" }],
+        enableTcp: true,
+        enableUdp: true,
+        preferUdp: true,
+      });
+      transports.set(clientId, {
+        producerTransport,
+        consumerTransport,
+      });
+
       ws.send(
         JSON.stringify({
-          action: "transportCreated",
+          action: "transportsCreated",
           data: {
-            id: transport.id,
-            iceCandidates: transport.iceCandidates,
-            iceParameters: transport.iceParameters,
-            dtlsParameters: transport.dtlsParameters,
+            producer: {
+              id: producerTransport.id,
+              iceParameters: producerTransport.iceParameters,
+              iceCandidates: producerTransport.iceCandidates,
+              dtlsParameters: producerTransport.dtlsParameters,
+            },
+            consumer: {
+              id: consumerTransport.id,
+              iceParameters: consumerTransport.iceParameters,
+              iceCandidates: consumerTransport.iceCandidates,
+              dtlsParameters: consumerTransport.dtlsParameters,
+            },
           },
         })
       );
     }
 
-    if (action === "connectTransport") {
-      const transport = transports.get(clientId);
-      await transport.connect({ dtlsParameters: data });
+    if (action === "connectProducerTransport") {
+      const producerTransport = transports.get(clientId).producerTransport;
+      await producerTransport.connect({ dtlsParameters: data });
+    }
+
+    if (action === "connectConsumerTransport") {
+      const consumerTransport = transports.get(clientId).consumerTransport;
+      await consumerTransport.connect({ dtlsParameters: data });
     }
 
     if (action === "produce") {
-      const transport = transports.get(clientId);
+      const transport = transports.get(clientId).producerTransport;
       const producer = await transport.produce({
         kind: data.kind,
         rtpParameters: data.rtpParameters,
       });
       producers.set(clientId, producer);
+      wss.clients.forEach((client) => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(
+            JSON.stringify({
+              action: "newProducer",
+              data: { clientId },
+            })
+          );
+        }
+      });
     }
 
     if (action === "consume") {
-      const transport = transports.get(clientId);
-      const producer = producers.get(clientId);
+      const transport = transports.get(clientId).consumerTransport;
+      const producer = producers.get(data.producerClientId);
+      if (!producer) return;
       const consumer = await transport.consume({
         producerId: producer.id,
         rtpCapabilities: data.rtpCapabilities,
@@ -120,5 +160,20 @@ wss.on("connection", (ws) => {
         })
       );
     }
+
+
+    
+    ws.on("close", () => {
+      const clientTransports = transports.get(clientId);
+      clientTransports?.producerTransport?.close();
+      clientTransports?.consumerTransport?.close();
+
+      producers.get(clientId)?.close();
+      consumers.get(clientId)?.close();
+
+      transports.delete(clientId);
+      producers.delete(clientId);
+      consumers.delete(clientId);
+    });
   });
 });
