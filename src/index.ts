@@ -131,7 +131,7 @@ wss.on("connection", (ws) => {
           client.send(
             JSON.stringify({
               action: "newProducer",
-              data: { clientId },
+              data: { id: producer.id },
             })
           );
         }
@@ -161,8 +161,6 @@ wss.on("connection", (ws) => {
       );
     }
 
-
-    
     ws.on("close", () => {
       const clientTransports = transports.get(clientId);
       clientTransports?.producerTransport?.close();
