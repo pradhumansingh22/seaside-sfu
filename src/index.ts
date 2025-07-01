@@ -57,6 +57,7 @@ const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws) => {
   ws.on("error", console.error);
+  console.log("connection established");
   ws.on("message", async (message: any) => {
     const { clientId, action, data } = JSON.parse(message);
 
@@ -67,22 +68,26 @@ wss.on("connection", (ws) => {
           data: router.rtpCapabilities,
         })
       );
+      console.log("rtpCapabilities sent");
     }
 
     if (action === "createTransports") {
+      console.log("creating transports");
       const producerTransport = await router.createWebRtcTransport({
-        listenIps: [{ ip: "0.0.0.0", announcedIp: "47.15.77.10" }],
+        listenIps: [{ ip: "127.0.0.1" }],
+
         enableTcp: true,
         enableUdp: true,
         preferUdp: true,
       });
 
       const consumerTransport = await router.createWebRtcTransport({
-        listenIps: [{ ip: "0.0.0.0", announcedIp: "47.15.77.10" }],
+        listenIps: [{ ip: "127.0.0.1" }],
         enableTcp: true,
         enableUdp: true,
         preferUdp: true,
       });
+      console.log("client id while creating", clientId);
       transports.set(clientId, {
         producerTransport,
         consumerTransport,
@@ -107,16 +112,28 @@ wss.on("connection", (ws) => {
           },
         })
       );
+      console.log("Transports created");
     }
 
     if (action === "connectProducerTransport") {
+      console.log("clientid", clientId);
+
       const producerTransport = transports.get(clientId).producerTransport;
       await producerTransport.connect({ dtlsParameters: data });
+      console.log("connected to producer transport");
     }
 
     if (action === "connectConsumerTransport") {
+      console.log("connecting consumer transport---", clientId);
       const consumerTransport = transports.get(clientId).consumerTransport;
       await consumerTransport.connect({ dtlsParameters: data });
+      console.log("connected to consumer transport");
+
+      ws.send(
+        JSON.stringify({
+          action: "consumerTransportConnected",
+        })
+      );
     }
 
     if (action === "produce") {
@@ -131,11 +148,15 @@ wss.on("connection", (ws) => {
           client.send(
             JSON.stringify({
               action: "newProducer",
-              data: { id: producer.id },
+              data: {
+                id: producer.id,
+                producerClientId: clientId,
+              },
             })
           );
         }
       });
+      console.log("producing");
     }
 
     if (action === "consume") {
@@ -156,22 +177,11 @@ wss.on("connection", (ws) => {
             id: consumer.id,
             kind: consumer.kind,
             rtpParameters: consumer.rtpParameters,
+            producerId: producer.id,
           },
         })
       );
+      console.log("consuming");
     }
-
-    ws.on("close", () => {
-      const clientTransports = transports.get(clientId);
-      clientTransports?.producerTransport?.close();
-      clientTransports?.consumerTransport?.close();
-
-      producers.get(clientId)?.close();
-      consumers.get(clientId)?.close();
-
-      transports.delete(clientId);
-      producers.delete(clientId);
-      consumers.delete(clientId);
-    });
   });
 });
