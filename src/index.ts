@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { userRouter } from "./routes/userRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const app = express();
 app.use(
@@ -10,6 +13,7 @@ app.use(
   })
 );
 
+app.use(express.json());
 app.use("/api/user", userRouter);
 
 export const server = app.listen(8080, "0.0.0.0", () => {

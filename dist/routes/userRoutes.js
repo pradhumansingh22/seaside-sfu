@@ -9,16 +9,41 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { Router } from "express";
 import { prisma } from "../db.js";
-export const userRouter = Router();
-userRouter.post("/create", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const body = req.body;
-    console.log("hello");
-    yield prisma.user.create({
-        data: {
-            email: body.email,
-            password: body.password,
-            firstName: body.firstName,
-            lastName: body.lastName,
-        },
+import { z } from "zod";
+import bcrypt from "bcrypt";
+const userRouter = Router();
+const signInSchema = z.object({
+    email: z.email(),
+    password: z.string(),
+});
+userRouter.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { success, data } = signInSchema.safeParse(req.body);
+    if (!success) {
+        res.status(400).json({
+            message: "Invalid input",
+        });
+        return;
+    }
+    const { email, password } = data;
+    const existingUser = yield prisma.user.findFirst({ where: { email } });
+    if (!existingUser) {
+        res.status(404).json({
+            message: "User not found",
+        });
+        return;
+    }
+    const validatePassword = yield bcrypt.compare(password, existingUser === null || existingUser === void 0 ? void 0 : existingUser.password);
+    if (!validatePassword) {
+        res.status(401).json({
+            message: "Invalid Credentials",
+        });
+        return;
+    }
+    res.status(200).json({
+        message: "Login Successfull",
+        success: true,
+        id: existingUser.id.toString(),
+        email: existingUser.email,
     });
 }));
+export default userRouter;
