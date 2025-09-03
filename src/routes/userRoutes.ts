@@ -36,6 +36,7 @@ userRouter.post("/signin", async (req, res) => {
   if (!success) {
     res.status(400).json({
       message: "Invalid input",
+      success: false,
     });
     return;
   }
@@ -47,6 +48,7 @@ userRouter.post("/signin", async (req, res) => {
   if (!existingUser) {
     res.status(404).json({
       message: "User not found",
+      success: false,
     });
     return;
   }
@@ -56,9 +58,11 @@ userRouter.post("/signin", async (req, res) => {
     console.log("hi there");
     res.status(401).json({
       message: "Invalid Credentials",
+      success: false,
     });
     return;
   }
+  console.log("hello");
   res.status(200).json({
     message: "Login Successfull",
     success: true,
@@ -82,17 +86,28 @@ userRouter.post("/OAuth-signin", async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
-    await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         firstName,
         lastName,
+        isVerified: true,
       },
     });
+    res.status(200).json({
+      message: "Login Successful",
+      success: true,
+      id: newUser.id,
+      isVerified: newUser.isVerified,
+    });
+    return;
   }
+
   res.status(200).json({
     message: "Login Successful",
     success: true,
+    id: user.id,
+    isVerified: user.isVerified,
   });
   return;
 });
