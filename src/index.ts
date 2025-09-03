@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import userRouter from "./routes/userRoutes.js";
 import dotenv from "dotenv";
+import { startWebSocketServer } from "./ws/index.js";
 dotenv.config();
 
 
@@ -16,6 +17,8 @@ app.use(
 app.use(express.json());
 app.use("/api/user", userRouter);
 
-export const server = app.listen(8080, "0.0.0.0", () => {
+const server = app.listen(8080, "0.0.0.0", () => {
   console.log("Server listening on port 8080");
 });
+
+startWebSocketServer(server);

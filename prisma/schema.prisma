@@ -30,3 +30,11 @@ model otpStore {
   otp     String @unique
   createdAt DateTime
 }
+
+model space {
+  id     String @id @unique @default(uuid())
+  hostId String @unique
+  participants  String[]
+  createdAt  DateTime
+  endedAt DateTime
+}
