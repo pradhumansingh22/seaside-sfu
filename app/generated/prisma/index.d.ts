@@ -30,6 +30,24 @@ export type otpStore = $Result.DefaultSelection<Prisma.$otpStorePayload>
 export type space = $Result.DefaultSelection<Prisma.$spacePayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const SpaceStatus: {
+  active: 'active',
+  scheduled: 'scheduled',
+  ended: 'ended'
+};
+
+export type SpaceStatus = (typeof SpaceStatus)[keyof typeof SpaceStatus]
+
+}
+
+export type SpaceStatus = $Enums.SpaceStatus
+
+export const SpaceStatus: typeof $Enums.SpaceStatus
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -3056,6 +3074,8 @@ export namespace Prisma {
     hostId: string | null
     createdAt: Date | null
     endedAt: Date | null
+    inviteToken: string | null
+    status: $Enums.SpaceStatus | null
   }
 
   export type SpaceMaxAggregateOutputType = {
@@ -3063,6 +3083,8 @@ export namespace Prisma {
     hostId: string | null
     createdAt: Date | null
     endedAt: Date | null
+    inviteToken: string | null
+    status: $Enums.SpaceStatus | null
   }
 
   export type SpaceCountAggregateOutputType = {
@@ -3071,6 +3093,8 @@ export namespace Prisma {
     participants: number
     createdAt: number
     endedAt: number
+    inviteToken: number
+    status: number
     _all: number
   }
 
@@ -3080,6 +3104,8 @@ export namespace Prisma {
     hostId?: true
     createdAt?: true
     endedAt?: true
+    inviteToken?: true
+    status?: true
   }
 
   export type SpaceMaxAggregateInputType = {
@@ -3087,6 +3113,8 @@ export namespace Prisma {
     hostId?: true
     createdAt?: true
     endedAt?: true
+    inviteToken?: true
+    status?: true
   }
 
   export type SpaceCountAggregateInputType = {
@@ -3095,6 +3123,8 @@ export namespace Prisma {
     participants?: true
     createdAt?: true
     endedAt?: true
+    inviteToken?: true
+    status?: true
     _all?: true
   }
 
@@ -3175,7 +3205,9 @@ export namespace Prisma {
     hostId: string
     participants: string[]
     createdAt: Date
-    endedAt: Date
+    endedAt: Date | null
+    inviteToken: string
+    status: $Enums.SpaceStatus
     _count: SpaceCountAggregateOutputType | null
     _min: SpaceMinAggregateOutputType | null
     _max: SpaceMaxAggregateOutputType | null
@@ -3201,6 +3233,8 @@ export namespace Prisma {
     participants?: boolean
     createdAt?: boolean
     endedAt?: boolean
+    inviteToken?: boolean
+    status?: boolean
   }, ExtArgs["result"]["space"]>
 
   export type spaceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3209,6 +3243,8 @@ export namespace Prisma {
     participants?: boolean
     createdAt?: boolean
     endedAt?: boolean
+    inviteToken?: boolean
+    status?: boolean
   }, ExtArgs["result"]["space"]>
 
   export type spaceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3217,6 +3253,8 @@ export namespace Prisma {
     participants?: boolean
     createdAt?: boolean
     endedAt?: boolean
+    inviteToken?: boolean
+    status?: boolean
   }, ExtArgs["result"]["space"]>
 
   export type spaceSelectScalar = {
@@ -3225,9 +3263,11 @@ export namespace Prisma {
     participants?: boolean
     createdAt?: boolean
     endedAt?: boolean
+    inviteToken?: boolean
+    status?: boolean
   }
 
-  export type spaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "hostId" | "participants" | "createdAt" | "endedAt", ExtArgs["result"]["space"]>
+  export type spaceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "hostId" | "participants" | "createdAt" | "endedAt" | "inviteToken" | "status", ExtArgs["result"]["space"]>
 
   export type $spacePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "space"
@@ -3237,7 +3277,9 @@ export namespace Prisma {
       hostId: string
       participants: string[]
       createdAt: Date
-      endedAt: Date
+      endedAt: Date | null
+      inviteToken: string
+      status: $Enums.SpaceStatus
     }, ExtArgs["result"]["space"]>
     composites: {}
   }
@@ -3666,6 +3708,8 @@ export namespace Prisma {
     readonly participants: FieldRef<"space", 'String[]'>
     readonly createdAt: FieldRef<"space", 'DateTime'>
     readonly endedAt: FieldRef<"space", 'DateTime'>
+    readonly inviteToken: FieldRef<"space", 'String'>
+    readonly status: FieldRef<"space", 'SpaceStatus'>
   }
     
 
@@ -4074,7 +4118,9 @@ export namespace Prisma {
     hostId: 'hostId',
     participants: 'participants',
     createdAt: 'createdAt',
-    endedAt: 'endedAt'
+    endedAt: 'endedAt',
+    inviteToken: 'inviteToken',
+    status: 'status'
   };
 
   export type SpaceScalarFieldEnum = (typeof SpaceScalarFieldEnum)[keyof typeof SpaceScalarFieldEnum]
@@ -4141,6 +4187,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SpaceStatus'
+   */
+  export type EnumSpaceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SpaceStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'SpaceStatus[]'
+   */
+  export type ListEnumSpaceStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SpaceStatus[]'>
     
 
 
@@ -4278,7 +4338,9 @@ export namespace Prisma {
     hostId?: StringFilter<"space"> | string
     participants?: StringNullableListFilter<"space">
     createdAt?: DateTimeFilter<"space"> | Date | string
-    endedAt?: DateTimeFilter<"space"> | Date | string
+    endedAt?: DateTimeNullableFilter<"space"> | Date | string | null
+    inviteToken?: StringFilter<"space"> | string
+    status?: EnumSpaceStatusFilter<"space"> | $Enums.SpaceStatus
   }
 
   export type spaceOrderByWithRelationInput = {
@@ -4286,7 +4348,9 @@ export namespace Prisma {
     hostId?: SortOrder
     participants?: SortOrder
     createdAt?: SortOrder
-    endedAt?: SortOrder
+    endedAt?: SortOrderInput | SortOrder
+    inviteToken?: SortOrder
+    status?: SortOrder
   }
 
   export type spaceWhereUniqueInput = Prisma.AtLeast<{
@@ -4297,7 +4361,9 @@ export namespace Prisma {
     NOT?: spaceWhereInput | spaceWhereInput[]
     participants?: StringNullableListFilter<"space">
     createdAt?: DateTimeFilter<"space"> | Date | string
-    endedAt?: DateTimeFilter<"space"> | Date | string
+    endedAt?: DateTimeNullableFilter<"space"> | Date | string | null
+    inviteToken?: StringFilter<"space"> | string
+    status?: EnumSpaceStatusFilter<"space"> | $Enums.SpaceStatus
   }, "id" | "id" | "hostId">
 
   export type spaceOrderByWithAggregationInput = {
@@ -4305,7 +4371,9 @@ export namespace Prisma {
     hostId?: SortOrder
     participants?: SortOrder
     createdAt?: SortOrder
-    endedAt?: SortOrder
+    endedAt?: SortOrderInput | SortOrder
+    inviteToken?: SortOrder
+    status?: SortOrder
     _count?: spaceCountOrderByAggregateInput
     _max?: spaceMaxOrderByAggregateInput
     _min?: spaceMinOrderByAggregateInput
@@ -4319,7 +4387,9 @@ export namespace Prisma {
     hostId?: StringWithAggregatesFilter<"space"> | string
     participants?: StringNullableListFilter<"space">
     createdAt?: DateTimeWithAggregatesFilter<"space"> | Date | string
-    endedAt?: DateTimeWithAggregatesFilter<"space"> | Date | string
+    endedAt?: DateTimeNullableWithAggregatesFilter<"space"> | Date | string | null
+    inviteToken?: StringWithAggregatesFilter<"space"> | string
+    status?: EnumSpaceStatusWithAggregatesFilter<"space"> | $Enums.SpaceStatus
   }
 
   export type UserCreateInput = {
@@ -4446,7 +4516,9 @@ export namespace Prisma {
     hostId: string
     participants?: spaceCreateparticipantsInput | string[]
     createdAt: Date | string
-    endedAt: Date | string
+    endedAt?: Date | string | null
+    inviteToken: string
+    status?: $Enums.SpaceStatus
   }
 
   export type spaceUncheckedCreateInput = {
@@ -4454,7 +4526,9 @@ export namespace Prisma {
     hostId: string
     participants?: spaceCreateparticipantsInput | string[]
     createdAt: Date | string
-    endedAt: Date | string
+    endedAt?: Date | string | null
+    inviteToken: string
+    status?: $Enums.SpaceStatus
   }
 
   export type spaceUpdateInput = {
@@ -4462,7 +4536,9 @@ export namespace Prisma {
     hostId?: StringFieldUpdateOperationsInput | string
     participants?: spaceUpdateparticipantsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    endedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inviteToken?: StringFieldUpdateOperationsInput | string
+    status?: EnumSpaceStatusFieldUpdateOperationsInput | $Enums.SpaceStatus
   }
 
   export type spaceUncheckedUpdateInput = {
@@ -4470,7 +4546,9 @@ export namespace Prisma {
     hostId?: StringFieldUpdateOperationsInput | string
     participants?: spaceUpdateparticipantsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    endedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inviteToken?: StringFieldUpdateOperationsInput | string
+    status?: EnumSpaceStatusFieldUpdateOperationsInput | $Enums.SpaceStatus
   }
 
   export type spaceCreateManyInput = {
@@ -4478,7 +4556,9 @@ export namespace Prisma {
     hostId: string
     participants?: spaceCreateparticipantsInput | string[]
     createdAt: Date | string
-    endedAt: Date | string
+    endedAt?: Date | string | null
+    inviteToken: string
+    status?: $Enums.SpaceStatus
   }
 
   export type spaceUpdateManyMutationInput = {
@@ -4486,7 +4566,9 @@ export namespace Prisma {
     hostId?: StringFieldUpdateOperationsInput | string
     participants?: spaceUpdateparticipantsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    endedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inviteToken?: StringFieldUpdateOperationsInput | string
+    status?: EnumSpaceStatusFieldUpdateOperationsInput | $Enums.SpaceStatus
   }
 
   export type spaceUncheckedUpdateManyInput = {
@@ -4494,7 +4576,9 @@ export namespace Prisma {
     hostId?: StringFieldUpdateOperationsInput | string
     participants?: spaceUpdateparticipantsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    endedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inviteToken?: StringFieldUpdateOperationsInput | string
+    status?: EnumSpaceStatusFieldUpdateOperationsInput | $Enums.SpaceStatus
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -4665,12 +4749,32 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumSpaceStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SpaceStatus | EnumSpaceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSpaceStatusFilter<$PrismaModel> | $Enums.SpaceStatus
+  }
+
   export type spaceCountOrderByAggregateInput = {
     id?: SortOrder
     hostId?: SortOrder
     participants?: SortOrder
     createdAt?: SortOrder
     endedAt?: SortOrder
+    inviteToken?: SortOrder
+    status?: SortOrder
   }
 
   export type spaceMaxOrderByAggregateInput = {
@@ -4678,6 +4782,8 @@ export namespace Prisma {
     hostId?: SortOrder
     createdAt?: SortOrder
     endedAt?: SortOrder
+    inviteToken?: SortOrder
+    status?: SortOrder
   }
 
   export type spaceMinOrderByAggregateInput = {
@@ -4685,6 +4791,32 @@ export namespace Prisma {
     hostId?: SortOrder
     createdAt?: SortOrder
     endedAt?: SortOrder
+    inviteToken?: SortOrder
+    status?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumSpaceStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SpaceStatus | EnumSpaceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSpaceStatusWithAggregatesFilter<$PrismaModel> | $Enums.SpaceStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSpaceStatusFilter<$PrismaModel>
+    _max?: NestedEnumSpaceStatusFilter<$PrismaModel>
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -4710,6 +4842,14 @@ export namespace Prisma {
   export type spaceUpdateparticipantsInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type EnumSpaceStatusFieldUpdateOperationsInput = {
+    set?: $Enums.SpaceStatus
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -4832,6 +4972,48 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumSpaceStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.SpaceStatus | EnumSpaceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSpaceStatusFilter<$PrismaModel> | $Enums.SpaceStatus
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSpaceStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SpaceStatus | EnumSpaceStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SpaceStatus[] | ListEnumSpaceStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumSpaceStatusWithAggregatesFilter<$PrismaModel> | $Enums.SpaceStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSpaceStatusFilter<$PrismaModel>
+    _max?: NestedEnumSpaceStatusFilter<$PrismaModel>
   }
 
 

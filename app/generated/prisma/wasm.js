@@ -142,7 +142,9 @@ exports.Prisma.SpaceScalarFieldEnum = {
   hostId: 'hostId',
   participants: 'participants',
   createdAt: 'createdAt',
-  endedAt: 'endedAt'
+  endedAt: 'endedAt',
+  inviteToken: 'inviteToken',
+  status: 'status'
 };
 
 exports.Prisma.SortOrder = {
@@ -159,7 +161,11 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.SpaceStatus = exports.$Enums.SpaceStatus = {
+  active: 'active',
+  scheduled: 'scheduled',
+  ended: 'ended'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',

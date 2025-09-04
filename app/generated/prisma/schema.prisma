@@ -32,9 +32,17 @@ model otpStore {
 }
 
 model space {
-  id           String   @id @unique @default(uuid())
-  hostId       String   @unique
+  id           String      @id @unique @default(uuid())
+  hostId       String      @unique
   participants String[]
   createdAt    DateTime
-  endedAt      DateTime
+  endedAt      DateTime?
+  inviteToken  String
+  status       SpaceStatus @default(scheduled)
+}
+
+enum SpaceStatus {
+  active
+  scheduled
+  ended
 }
