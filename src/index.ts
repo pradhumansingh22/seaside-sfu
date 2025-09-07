@@ -3,9 +3,8 @@ import cors from "cors";
 import userRouter from "./routes/userRoutes.js";
 import spaceRouter from "./routes/spaceRoutes.js";
 import dotenv from "dotenv";
-import { startWebSocketServer } from "./ws/index.js";
+import { startWebSocketServer } from "./server.js";
 dotenv.config();
-
 
 const app = express();
 app.use(

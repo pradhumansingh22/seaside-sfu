@@ -23,7 +23,7 @@ spaceRouter.post("/create", authMiddleware, async (req: CustomReq, res) => {
         status: "active",
       },
     });
-      res.status(200).json({ success: true, message: "space created", inviteToken, status: newSpace.status, createAt: newSpace.createdAt });
+    res.status(200).json({ success: true, message: "space created", inviteToken, status: newSpace.status, createAt: newSpace.createdAt, spaceId:newSpace.id });
       return;
   } catch (error) {
       res.status(500).json({ success: false, message: "server error" });
