@@ -1,7 +1,6 @@
 import * as mediasoup from "mediasoup";
 import type { Worker, Router } from "mediasoup/types";
 import { SendSocketMessage } from "../server.js";
-import { getRedisClient } from "../config/redisClient.js";
 
 let worker: Worker;
 const routers = new Map<string, Router>();
@@ -45,7 +44,7 @@ export const createRouter = async (spaceId: string) => {
   return router;
 };
 
-export const getRtpCapabilities = (spaceId: string) => {
+export const getRtpCapabilities = (spaceId: string, clientId:string) => {
   const router = routers.get(spaceId);
   if (!router) {
     SendSocketMessage(
@@ -55,10 +54,10 @@ export const getRtpCapabilities = (spaceId: string) => {
     return;
   }
 
-  JSON.stringify({
+  SendSocketMessage(JSON.stringify({
     action: "rtpCapabilities",
     data: routers.get(spaceId)?.rtpCapabilities,
-  });
+  }), "one", clientId);
 
   console.log("rtpCapabilities sent");
 };

@@ -23,6 +23,8 @@ export const startWebSocketServer = async (server: any) => {
     console.log("connection established");
     ws.on("message", async (message: any) => {
       const { clientId, action, data } = JSON.parse(message);
+      await createRouter(data.spaceId);
+
 
       switch (action) {
         
@@ -49,7 +51,7 @@ export const startWebSocketServer = async (server: any) => {
           break;
 
         case "getRtpCapabilities":
-          getRtpCapabilities(data.spaceId);
+          getRtpCapabilities(data.spaceId, clientId);
           break;
 
         case "createTransports":
@@ -94,7 +96,14 @@ export const SendSocketMessage = (
   target: Target,
   clientId?: string
 ) => {
-  if (!wss) return;
+  if (!wss) {
+    console.log("NO websocket connection")
+    return
+  };
+
+
+  //The clientId and ws ClintId is different here, fix that shit.
+  //Get the clientId from the websocket client and send that shit here. 
 
   switch (target) {
     case "all":
@@ -108,6 +117,7 @@ export const SendSocketMessage = (
     case "one":
       wss.clients.forEach((client: any) => {
         if (client.id === clientId && client.readyState === WebSocket.OPEN) {
+          console.log("sending ws msg")
           client.send(messageData);
         }
       });
