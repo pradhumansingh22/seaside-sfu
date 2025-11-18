@@ -102,8 +102,8 @@ export const SendSocketMessage = (
   };
 
 
-  //The clientId and ws ClintId is different here, fix that shit.
-  //Get the clientId from the websocket client and send that shit here. 
+  // The clientId and ws ClintId is different here, fix that shit.
+  // Get the clientId from the websocket client and send that shit here. 
 
   switch (target) {
     case "all":
