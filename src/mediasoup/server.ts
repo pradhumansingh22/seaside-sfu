@@ -75,24 +75,14 @@ export const createTransports = async (spaceId: string, clientId: string) => {
     return;
   }
   const producerTransport = await router.createWebRtcTransport({
-    listenIps: [
-      {
-        ip: "127.0.0.1",
-        announcedIp: "10.252.159.245",
-      },
-    ],
+    listenIps: [{ ip: "127.0.0.1" }],
     enableTcp: true,
     enableUdp: true,
     preferUdp: true,
   });
 
   const consumerTransport = await router.createWebRtcTransport({
-    listenIps: [
-      {
-        ip: "127.0.0.1",
-        announcedIp: "10.252.159.245",
-      },
-    ],
+    listenIps: [{ ip: "127.0.0.1" }],
     enableTcp: true,
     enableUdp: true,
     preferUdp: true,
